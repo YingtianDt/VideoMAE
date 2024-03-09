@@ -9,8 +9,7 @@ from torchvision import transforms
 
 class VideoMAEv1Wrapper(PytorchWrapper):
     def forward(self, inputs):
-        import torch
-        tensor = torch.stack(inputs)
+        tensor = th.stack(inputs)
         tensor = tensor.to(self._device)
         return self._model.forward_encoder(tensor, mask=None)  # encoder only
     
@@ -66,7 +65,7 @@ def get_model(identifier, num_frames=16):
     feature_map_size = 14
 
     inferencer_kwargs = {
-        "fps": 4,
+        "fps": 6.25,
         "layer_activation_format": {
             "encoder.patch_embed": "THWC",
             **{f"encoder.blocks.{i}": "THWC" for i in range(num_blocks)},
