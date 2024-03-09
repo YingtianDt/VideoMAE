@@ -5,12 +5,12 @@ import torch
 import decord
 from PIL import Image
 from torchvision import transforms
-from random_erasing import RandomErasing
+from .random_erasing import RandomErasing
 import warnings
 from decord import VideoReader, cpu
 from torch.utils.data import Dataset
-import video_transforms as video_transforms 
-import volume_transforms as volume_transforms
+from . import video_transforms as video_transforms 
+from . import volume_transforms as volume_transforms
 
 class VideoClsDataset(Dataset):
     """Load your own video classification dataset."""

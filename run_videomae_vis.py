@@ -6,16 +6,16 @@ import torch.backends.cudnn as cudnn
 from PIL import Image
 from pathlib import Path
 from timm.models import create_model
-import utils
-import modeling_pretrain
-from datasets import DataAugmentationForVideoMAE
+from . import utils
+from . import modeling_pretrain
+from .datasets import DataAugmentationForVideoMAE
 from torchvision.transforms import ToPILImage
 from einops import rearrange
 from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from decord import VideoReader, cpu
 from torchvision import transforms
-from transforms import *
-from masking_generator import  TubeMaskingGenerator
+from .transforms import *
+from .masking_generator import TubeMaskingGenerator
 
 class DataAugmentationForVideoMAE(object):
     def __init__(self, args):
@@ -47,9 +47,9 @@ class DataAugmentationForVideoMAE(object):
 
 def get_args():
     parser = argparse.ArgumentParser('VideoMAE visualization reconstruction script', add_help=False)
-    parser.add_argument('img_path', type=str, help='input video path')
-    parser.add_argument('save_path', type=str, help='save video path')
-    parser.add_argument('model_path', type=str, help='checkpoint path of model')
+    # parser.add_argument('img_path', type=str, help='input video path')
+    # parser.add_argument('save_path', type=str, help='save video path')
+    # parser.add_argument('model_path', type=str, help='checkpoint path of model')
     parser.add_argument('--mask_type', default='random', choices=['random', 'tube'],
                         type=str, help='masked strategy of video tokens/patches')
     parser.add_argument('--num_frames', type=int, default= 16)

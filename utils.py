@@ -15,7 +15,7 @@ import torch.distributed as dist
 from torch._six import inf
 import random
 
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
 
 
 class SmoothedValue(object):

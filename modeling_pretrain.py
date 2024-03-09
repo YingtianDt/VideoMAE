@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 from functools import partial
 
-from modeling_finetune import Block, _cfg, PatchEmbed, get_sinusoid_encoding_table
+from .modeling_finetune import Block, _cfg, PatchEmbed, get_sinusoid_encoding_table
 from timm.models.registry import register_model
 from timm.models.layers import trunc_normal_ as __call_trunc_normal_
 
@@ -85,14 +85,17 @@ class PretrainVisionTransformerEncoder(nn.Module):
         self.num_classes = num_classes
         self.head = nn.Linear(self.embed_dim, num_classes) if num_classes > 0 else nn.Identity()
 
-    def forward_features(self, x, mask):
+    def forward_features(self, x, mask=None):
         _, _, T, _, _ = x.shape
         x = self.patch_embed(x)
         
         x = x + self.pos_embed.type_as(x).to(x.device).clone().detach()
 
         B, _, C = x.shape
-        x_vis = x[~mask].reshape(B, -1, C) # ~mask means visible
+        if mask:
+            x_vis = x[~mask].reshape(B, -1, C) # ~mask means visible
+        else:
+            x_vis = x.reshape(B, -1, C) # ~mask means visible
 
         if self.use_checkpoint:
             for blk in self.blocks:
@@ -282,6 +285,13 @@ class PretrainVisionTransformer(nn.Module):
         x = self.decoder(x_full, pos_emd_mask.shape[1]) # [B, N_mask, 3 * 16 * 16]
 
         return x
+    
+    def forward_encoder(self, x, mask):
+        _, _, T, _, _ = x.shape
+        x_vis = self.encoder(x, mask) # [B, N_vis, C_e]
+        x_vis = self.encoder_to_decoder(x_vis) # [B, N_vis, C_d]
+        B, N, C = x_vis.shape
+        return x_vis
 
 @register_model
 def pretrain_videomae_small_patch16_224(pretrained=False, **kwargs):
