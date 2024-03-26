@@ -343,6 +343,7 @@ def pretrain_videomae_base_patch16_224(pretrained=False, **kwargs):
  
 @register_model
 def pretrain_videomae_large_patch16_224(pretrained=False, **kwargs):
+    if 'pretrained_cfg' in kwargs: del kwargs['pretrained_cfg']
     model = PretrainVisionTransformer(
         img_size=224,
         patch_size=16, 
